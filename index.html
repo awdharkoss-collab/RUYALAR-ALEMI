@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nur-u Tabir | Büyük İslami Rüya Tabirleri Ansiklopedisi (A-Z)</title>
+<link href="https://googleapis.com" rel="stylesheet">
+<style>
+:root{--bg:#071912;--card:#0d261c;--gold:#d4af37;--light:#f3e5ab;--text:#f0f4f2;--muted:#9eb3a8;--border:rgba(212,175,55,0.35)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;line-height:1.65}
+header{text-align:center;padding:2.2rem 1rem;border-bottom:1px solid var(--border);background:#04110c}
+.logo{font-family:'Amiri',serif;font-size:3.2rem;color:var(--gold)}
+.wrap{max-width:1150px;margin:25px auto;padding:0 15px 60px}
+.book-bar{background:var(--card);border:1px solid var(--gold);border-radius:14px;padding:18px;margin-bottom:20px}
+.inp{width:100%;padding:14px 18px;border-radius:10px;border:1px solid var(--border);background:#05130e;color:#fff;font-size:15px;outline:none;margin-bottom:14px}
+.inp:focus{border-color:var(--gold)}
+.az-bar{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px}
+.az-btn{background:#05130e;border:1px solid var(--border);color:var(--gold);padding:6px 11px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700}
+.az-btn.act,.az-btn:hover{background:var(--gold);color:#05130e}
+.stats{text-align:center;font-size:13px;color:var(--muted);margin-top:8px}
+.daily{background:linear-gradient(145deg,#133b2b,#081e15);border:2px solid var(--gold);border-radius:14px;padding:20px;margin-bottom:22px}
+.daily-top{background:var(--gold);color:#05130e;font-weight:700;font-size:12px;padding:5px 12px;border-radius:6px;display:flex;justify-content:space-between;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;justify-content:space-between}
+.tag{display:inline-block;background:rgba(212,175,55,0.18);color:var(--gold);padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;margin-bottom:8px;align-self:flex-start}
+.card h3{color:var(--gold);font-size:18px;margin-bottom:8px}
+.desc{color:var(--text);font-size:14.5px;margin-bottom:12px}
+.src{background:rgba(0,0,0,0.4);border-left:3px solid var(--gold);padding:9px 12px;border-radius:0 8px 8px 0;font-size:12.5px;color:var(--muted)}
+.btn{background:var(--gold);color:#05130e;border:none;padding:8px 14px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;margin-top:12px;width:100%}
+.btn:hover{background:var(--light)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">كتاب تعبير الرؤيا</div>
+  <h2 style="color:var(--light)">BÜYÜK İSLAMİ RÜYA TABİRLERİ ANSİKLOPEDİSİ</h2>
+  <p style="color:var(--muted);font-size:13px">İbn Şîrîn • Abdülganî en-Nablusî • İmam Ca'fer-i Sâdık (r.a.) Büyük Külliyatı</p>
+</header>
+
+<div class="wrap">
+  <div class="book-bar">
+    <input class="inp" id="rSearch" placeholder="Ansiklopedide ara (Örn: Su, Yılan, Altın, Kabe, Diş, Bebek, Ev, Araba, Uçmak, Kan)..." onkeyup="filterR()">
+    <div class="az-bar" id="azBar"></div>
+    <div class="stats" id="statTxt"></div>
+  </div>
+
+  <div id="dailyBox" class="daily"></div>
+  <div id="rGrid" class="grid"></div>
+</div>
+
+<script>
+var KITAP = new Array(
+  {s:"Abdest Almak",c:"İbadet",k:"İbn Şîrîn",y:"Rüyada temiz su ile tam abdest almak; üzüntü ve kederden kurtulmaya, borçların ödenmesine, hastalıktan şifa bulmaya ve günahlardan arınmaya işaret eder. Abdesti yarım bırakmak ise başlanan bir işin gecikeceğine delalet eder."},
+  {s:"Ağaç Görmek",c:"Tabiat",k:"Nablusî",y:"Yeşil ve meyveli ağaç görmek; güzel ahlaklı, cömert ve faydalı bir kimseye, helal kazanca ve uzun ömre işaret eder. Kuru veya yapraksız ağaç ise geçici darlığa ve ihmal edilen işlere yorumlanır."},
+  {s:"Ağlamak",c:"Haller",k:"İmam Ca'fer-i Sâdık",y:"Sessizce ve gözlerinden yaş süzülerek ağlamak; büyük bir sevince, ferahlığa ve murada ermeye delalet eder. Yüksek sesle feryat ederek ağlamak ise sabır gerektiren bir habere işaret eder."},
+  {s:"Altın Görmek",c:"Rızık & Eşya",k:"İbn Şîrîn",y:"İşlenmiş altın takı (yüzük, bilezik, kolye) sevinç, nişan/evlilik ve mülk sahibi olmaya; işlenmemiş ham altın külçesi ise ağır bir emanet veya geçici sorumluluğa işaret eder."},
+  {s:"Anahtar Bulmak",c:"Rızık & Eşya",k:"Nablusî",y:"Eline anahtar geçmesi veya anahtar bulmak; kapalı rızık ve kısmet kapılarının açılmasına, zor bir işin kolaylaşmasına ve ilme erişmeye delalet eder."},
+  {s:"Araba / Binek Sürmek",c:"Yolculuk",k:"Nablusî",y:"Yeni ve hızlı bir arabaya veya bineğe binmek; rütbe yükselişine, hayırlı yolculuğa ve iş hayatında kontrolü ele almaya işaret eder."},
+  {s:"Arı ve Bal Görmek",c:"Canlılar",k:"İbn Şîrîn",y:"Bal arısı görmek; çalışkanlığa, berekete ve helal kazanca; süzme bal yemek ise Kur'an ilmine, şifaya ve tatlı söze delalet eder."},
+  {s:"Aslan Görmek",c:"Canlılar",k:"İmam Ca'fer-i Sâdık",y:"Aslan görmek; heybetli ve güçlü bir yöneticiye veya otoriteye işaret eder. Aslandan korkmamak veya ona hakim olmak büyük bir mevki kazanmaya yorumlanır."},
+  {s:"At Görmek",c:"Canlılar",k:"İbn Şîrîn",y:"Beyaz veya doru ata binmek; izzet, şeref, murada ermek ve güç kazanmaktır. Atın kanatlı olduğunu görmek ise iki cihan saadetine işaret eder."},
+  {s:"Ateş ve Işık Görmek",c:"Tabiat",k:"Nablusî",y:"Karanlıkta yol aydınlatan ateş veya nur görmek; hidayete, ilme ve menfaate; yakıcı ve dumanlı ateş ise fitne ve öfkeden sakınmak gerektiğine delalet eder."},
+  {s:"Ay ve Dolunay Görmek",c:"Gökyüzü",k:"İmam Ca'fer-i Sâdık",y:"Parlak dolunay görmek; yüksek makama, adaletli bir lidere, hayırlı evlada ve karanlık işlerin aydınlığa çıkmasına işaret eder."},
+  {s:"Ayakkabı Giymek",c:"Rızık & Eşya",k:"İbn Şîrîn",y:"Yeni ve rahat ayakkabı giymek; bekarlar için hayırlı evliliğe, evliler için yeni bir iş veya yolculuğa; ayakkabının kaybolması ise geçici bir ayrılığa yorumlanır."},
+  {s:"Bebek Görmek / Kucağa Almak",c:"Aile",k:"Nablusî",y:"Güzel yüzlü bir bebek kucaklamak; müjdeli habere, yeni bir başlangıca ve rızık genişliğine işaret eder. Ağlayan bebek ise biraz sabır ve ilgi gerektiren bir meseleye delalet eder."},
+  {s:"Balık Tutmak",c:"Canlılar",k:"İbn Şîrîn",y:"Denizden veya nehirden taze balık tutmak; toplu ve helal rızka, hayırlı kısmete ve sevinçli habere işaret eder."},
+  {s:"Bina / Yeni Ev Görmek",c:"Mekan",k:"Nablusî",y:"Geniş, aydınlık ve yeni bir eve girmek; dünya ve ahiret huzuruna, mülk edinmeye ve borçlardan kurtulmaya delalet eder."},
+  {s:"Bulut Görmek",c:"Gökyüzü",k:"İmam Ca'fer-i Sâdık",y:"Beyaz ve bereketli bulutlar görmek; ilme, hikmete, rahmete ve bolluk yılına işaret eder."},
+  {s:"Cami / Mescit Görmek",c:"İbadet",k:"İbn Şîrîn",y:"Camiye girmek veya camide namaz kılmak; korkulardan emin olmaya, hak ve adalete kavuşmaya, cemaatle hayır işlemeye delalet eder."},
+  {s:"Cennet Bahçesi Görmek",c:"Manevi",k:"Nablusî",y:"Rüyada cenneti veya cennet nimetlerini görmek; salih amellerin kabulüne, büyük müjdeye ve her iki dünyada selamete işaret eder."},
+  {s:"Ceviz ve Fındık Görmek",c:"Nimet",k:"İbn Şîrîn",y:"Kabuklu yemişler görmek; emek ve gayretle elde edilecek toplu mala ve birikime delalet eder."},
+  {s:"Çiçek ve Gül Görmek",c:"Tabiat",k:"Nablusî",y:"Kırmızı veya beyaz gül koklamak; sevgiye, güzel habere, hasret kalınan kimseye kavuşmaya ve gönül ferahlığına işaret eder."},
+  {s:"Çocukluk Arkadaşını Görmek",c:"Haller",k:"İbn Şîrîn",y:"Eski bir dostu güler yüzle görmek; vefaya, geçmişten gelen hayırlı bir desteğe ve sevinçli bir karşılaşmaya delalet eder."},
+  {s:"Dağ Zirvesine Çıkmak",c:"Tabiat",k:"İmam Ca'fer-i Sâdık",y:"Yüksek bir dağın zirvesine tırmanmak; zorlukları aşarak yüce bir makama erişmeye ve hedeflere ulaşmaya işaret eder."},
+  {s:"Denizde Yüzmek",c:"Tabiat",k:"İbn Şîrîn",y:"Berrak ve sakin denizde rahatça yüzmek; ilimde ve ticarette ilerlemeye, devlet büyüklerinden fayda görmeye delalet eder."},
+  {s:"Deve Görmek",c:"Canlılar",k:"Nablusî",y:"Deveye binmek veya deve sahibi olmak; sabırla kazanılacak büyük mülke, uzun yolculuğa ve berekete işaret eder."},
+  {s:"Diş Dökülmesi",c:"Haller",k:"İbn Şîrîn",y:"Dişlerin eline veya kucağına dökülmesi; uzun ömre, borçların ödenmesine ve aile nüfusunun artmasına delalet eder."},
+  {s:"Dua Etmek",c:"İbadet",k:"İmam Ca'fer-i Sâdık",y:"Ellerini açıp huşu ile dua etmek; hacetlerin kabulüne, darlıktan çıkışa ve ilahi yardıma kavuşmaya kesin işarettir."},
+  {s:"Düğün ve Ziyafet Görmek",c:"Aile",k:"Nablusî",y:"Sakin ve bereketli bir düğün sofrası görmek; bolluğa, hayırlı ortaklığa ve aile içi sevince delalet eder."},
+  {s:"Ekmek Yemek / Almak",c:"Rızık & Eşya",k:"İbn Şîrîn",y:"Sıcak ve temiz buğday ekmeği görmek; kolay kazanılan helal rızka, uzun ömre ve bereketli kazanca işaret eder."},
+  {s:"Elma Görmek",c:"Nimet",k:"Nablusî",y:"Tatlı ve kırmızı elma yemek; hayırlı evlada, güzel habere ve emeğin karşılığını almaya delalet eder."},
+  {s:"Ezan Okumak / Duymak",c:"İbadet",k:"İbn Şîrîn",y:"Ezan sesi işitmek veya okumak; hac yolculuğuna, yüksek itibara, doğruluk ve huzura işaret eder."}
+);
+var KITAP_2 = new Array(
+  {s:"Fare Görmek",c:"Canlılar",k:"İbn Şîrîn",y:"Rüyada fare görmek; evdeki rızka göz diken gizli bir kimseye veya tedbir alınması gereken küçük bir zarara işaret eder. Fareyi evden çıkarmak ise bu zarardan kurtulmaya delalet eder."},
+  {s:"Fırtına ve Rüzgar Görmek",c:"Tabiat",k:"Nablusî",y:"Hafif ve serin esen rüzgar müjdeye ve ferahlığa; şiddetli fırtına ise hızlı gelişecek olaylara ve sabırla aşılacak bir değişime işaret eder."},
+  {s:"Gemiye Binmek",c:"Yolculuk",k:"İmam Ca'fer-i Sâdık",y:"Denizde güvenle ilerleyen gemiye binmek; her türlü tehlikeden kurtuluşa, Nuh (a.s.) gemisi misali selamete ermeye ve hayırlı yolculuğa delalet eder."},
+  {s:"Gökkuşağı Görmek",c:"Gökyüzü",k:"Nablusî",y:"Gökyüzünde parlak gökkuşağı görmek; zorlukların ardından gelecek huzura, bereketli yıla ve emniyete işaret eder."},
+  {s:"Gömlek / Yeni Elbise Giymek",c:"Rızık & Eşya",k:"İbn Şîrîn",y:"Temiz ve yeni elbise giymek; izzet, şeref, din ve dünya güzelliğine, bekarlar için hayırlı evliliğe delalet eder."},
+  {s:"Güneş Görmek",c:"Gökyüzü",k:"İmam Ca'fer-i Sâdık",y:"Parlak güneş doğduğunu görmek; yüksek makama, hastalıktan şifaya, ilme ve büyük bir aydınlığa işaret eder."},
+  {s:"Güvercin Görmek",c:"Canlılar",k:"Nablusî",y:"Beyaz güvercin görmek; uzaktan gelecek sevinçli habere, sadık dosta, barışa ve gönül huzuruna delalet eder."},
+  {s:"Hacca Gitmek",c:"İbadet",k:"İbn Şîrîn",y:"Hac ibadetini yaptığını görmek; günahlardan arınmaya, borçların ödenmesine, korkulardan kurtulmaya ve murada ermeye işaret eder."},
+  {s:"Halı ve Kilim Görmek",c:"Rızık & Eşya",k:"Nablusî",y:"Geniş ve nakışlı halı sermek; ömrün uzunluğuna, rızık genişliğine ve itibara delalet eder."},
+  {s:"Hastalıktan İyileşmek",c:"Haller",k:"İbn Şîrîn",y:"Rüyada hastalıktan kalkıp iyileştiğini görmek; hem bedensel şifaya hem de manevi tövbe ve yenilenmeye işaret eder."},
+  {s:"Hazine Bulmak",c:"Rızık & Eşya",k:"Nablusî",y:"Topraktan veya eski bir yerden hazine çıkarmak; zahmetsiz elde edilecek helal rızka, ilme ve büyük berekete delalet eder."},
+  {s:"Hurma Yemek",c:"Nimet",k:"İbn Şîrîn",y:"Taze hurma yemek; Kur'an nuruna, helal kazanca, tatlı söze ve kalp huzuruna işaret eder."},
+  {s:"Irmak / Nehir Görmek",c:"Tabiat",k:"Nablusî",y:"Berrak akan ırmak görmek; şerefli bir kimsenin yardımına, bol rızka ve ferah bir hayata delalet eder."},
+  {s:"İncir ve Zeytin Görmek",c:"Nimet",k:"İmam Ca'fer-i Sâdık",y:"Kur'an'da üzerine yemin edilen incir ve zeytini görmek; berekete, şifaya, hayırlı mala ve uzun ömre işaret eder."},
+  {s:"İnci Görmek",c:"Rızık & Eşya",k:"İbn Şîrîn",y:"Dizili inciler görmek; Kur'an ayetlerine, ilme, güzel söze ve hayırlı evlada delalet eder."},
+  {s:"Kâbe'yi Görmek",c:"İbadet",k:"İmam Ca'fer-i Sâdık",y:"Kabe-i Muazzama'yı görmek; en yüce hayır, emniyet, duaların kabulü ve iki cihan saadetine işaret eder."},
+  {s:"Kalem ve Kitap Görmek",c:"İlim",k:"İbn Şîrîn",y:"Elinde kalem veya açık bir kitap görmek; ilme, hikmete, sözü geçerli olmaya ve müjdeli habere delalet eder."},
+  {s:"Kan Görmek",c:"Haller",k:"Nablusî",y:"Vücuttan kan aktığını görmek; haram veya şüpheli maldan arınmaya, ferahlamaya ve üzerindeki yükün hafiflemesine işaret eder."},
+  {s:"Kapı Açmak",c:"Mekan",k:"İbn Şîrîn",y:"Kilitli bir kapıyı açmak; rızık ve hacet kapılarının açılmasına, duanın kabulüne ve zorlukların bitmesine delalet eder."},
+  {s:"Kar Yağdığını Görmek",c:"Tabiat",k:"Nablusî",y:"Mevsiminde yağan temiz kar; rahmete, ucuzluğa, kederlerin erimesine ve şifaya işaret eder."},
+  {s:"Kedi Görmek",c:"Canlılar",k:"İbn Şîrîn",y:"Evcil ve uysal kedi görmek; ev halkından vefalı birine; tırmalayan vahşi kedi ise nankör bir kimseye karşı dikkatli olunmasına delalet eder."},
+  {s:"Kılıç / Kalkan Görmek",c:"Rızık & Eşya",k:"Nablusî",y:"Kılıç kuşanmak veya kalkan tutmak; izzet, şeref, haklı davada zafere ulaşma ve düşmandan korunmaya işaret eder."},
+  {s:"Koyun ve Kuzu Görmek",c:"Canlılar",k:"İbn Şîrîn",y:"Koyun sürüsü görmek; helal ganimete, berekete, yumuşak huylu hayırlı evlada ve huzura delalet eder."},
+  {s:"Köpek Görmek",c:"Canlılar",k:"Nablusî",y:"Sadık bekçi köpeği görmek; koruyucu bir dosta; havlayan köpek ise boş söz söyleyen zararsız bir hasma işaret eder."},
+  {s:"Köprüden Geçmek",c:"Yolculuk",k:"İbn Şîrîn",y:"Sağlam bir köprüden karşıya güvenle geçmek; tehlikeli bir imtihanı başarıyla atlatıp selamete ulaşmaya delalet eder."},
+  {s:"Kuş Sürüsü Görmek",c:"Canlılar",k:"Nablusî",y:"Gökyüzünde ahenkle uçan kuşlar görmek; hayırlı haberlere, berekete ve manevi yükselişe işaret eder."},
+  {s:"Kuyu ve Su Çekmek",c:"Tabiat",k:"İbn Şîrîn",y:"Kuyudan berrak su çekmek; ilim, helal kazanç ve hayırlı evliliğe delalet eder."},
+  {s:"Limon ve Portakal Görmek",c:"Nimet",k:"Nablusî",y:"Sarı ve güzel kokulu narenciye görmek; şifaya, ferahlığa ve güzel övgüye işaret eder."},
+  {s:"Melek Görmek",c:"Manevi",k:"İmam Ca'fer-i Sâdık",y:"Melekleri güler yüzle görmek; büyük bir müjdeye, korkulardan emin olmaya, zafere ve ilahi yardıma delalet eder."},
+  {s:"Merdiven Çıkmak",c:"Haller",k:"İbn Şîrîn",y:"Basamakları teker teker yukarı çıkmak; rütbe, ilim ve maddi-manevi derecelerde yükselişe işaret eder."},
+  {s:"Mezarlık / Kabristan Ziyareti",c:"Manevi",k:"Nablusî",y:"Kabristan ziyaret edip dua etmek; gafletten uyanmaya, ömrün bereketlenmesine ve salih amellere yönelmeye delalet eder."},
+  {s:"Misk ve Güzel Koku Sürmek",c:"Nimet",k:"İbn Şîrîn",y:"Güzel koku sürmek veya koklamak; insanlar arasında güzel isimle anılmaya, övgüye ve gönül ferahlığına işaret eder."},
+  {s:"Namaz Kılmak",c:"İbadet",k:"İbn Şîrîn",y:"Kıbleye yönelip namaz kılmak; borçların ödenmesine, emanete riayete, duanın kabulüne ve iki cihan saadetine delalet eder."},
+  {s:"Nar Görmek / Yemek",c:"Nimet",k:"Nablusî",y:"Tatlı nar görmek veya yemek; birikmiş helal mala, berekete ve hayırlı kazanca işaret eder."},
+  {s:"Oruç Tutmak",c:"İbadet",k:"İmam Ca'fer-i Sâdık",y:"Rüyada oruçlu olduğunu görmek; günahlardan korunmaya, borçtan kurtulmaya, şifaya ve hacetin kabulüne delalet eder."},
+  {s:"Ölmüş Birini Güler Yüzle Görmek",c:"Manevi",k:"İbn Şîrîn",y:"Vefat etmiş bir yakını temiz elbiseler içinde ve güler yüzle görmek; o kimsenin ahirette huzur içinde olduğuna ve rüya sahibine gelecek müjdeye işaret eder."},
+  {s:"Para / Altın Sikke Bulmak",c:"Rızık & Eşya",k:"Nablusî",y:"Temiz ve parlak sikkeler görmek; hayırlı söze, ilme, borçların kapanmasına ve yeni kazanç kapılarına delalet eder."},
+  {s:"Peygamber Efendimizi (s.a.v.) Görmek",c:"Manevi",k:"Buhârî & İbn Şîrîn",y:"Rüyada Hz. Peygamber'i (s.a.v.) görmek; hak ve gerçektir (çünkü şeytan O'nun suretine giremez). Büyük bir müjdeye, hidayete, darlıktan kurtuluşa ve şefaate işaret eder."}
+);
+var KITAP_3 = new Array(
+  {s:"Rüzgar / Meltem Esintisi",c:"Tabiat",k:"Nablusî",y:"Tatlı ve serin esen rüzgar görmek; müjdeli habere, rahmete ve işlerin kolaylaşmasına delalet eder."},
+  {s:"Saç Taramak / Kestirmek",c:"Haller",k:"İbn Şîrîn",y:"Saçlarını taramak işlerin düzene girmesine ve ömrün bereketlenmesine; düzenli saç kestirmek ise borç ve kederlerden kurtulmaya işaret eder."},
+  {s:"Sadaka Vermek",c:"İbadet",k:"İmam Ca'fer-i Sâdık",y:"Fakire sadaka verdiğini görmek; belaların def edilmesine, malın bereketlenmesine ve hastalıktan şifa bulmaya delalet eder."},
+  {s:"Sakal Görmek",c:"Haller",k:"İbn Şîrîn",y:"Düzenli ve gür sakal görmek; vakara, itibara, berekete ve sözü dinlenen bir kimse olmaya işaret eder."},
+  {s:"Saray / Köşk Görmek",c:"Mekan",k:"Nablusî",y:"Yüksek ve görkemli bir köşke girmek; dünyevi ve uhrevi yüce makama, mülke ve murada ermeye delalet eder."},
+  {s:"Süt İçmek",c:"Nimet",k:"İbn Şîrîn",y:"Taze ve temiz süt içmek; fıtrat temizliğine, helal rızka, ilme ve hikmete işaret eder."},
+  {s:"Şeker ve Tatlı Yemek",c:"Nimet",k:"Nablusî",y:"Helal tatlı veya şeker yemek; sevinçli habere, güzel söze, huzura ve hastalıktan kurtulmaya delalet eder."},
+  {s:"Şemsiye Açmak",c:"Rızık & Eşya",k:"Nablusî",y:"Yağmurdan veya güneşten koruyan şemsiye açmak; güçlü bir himayeye, tedbire ve emniyete işaret eder."},
+  {s:"Taç Giymek",c:"Rızık & Eşya",k:"İbn Şîrîn",y:"Başına altın veya incili taç konulduğunu görmek; ilme, Kur'an hafızlığına, itibara ve yüksek dereceye delalet eder."},
+  {s:"Tarla ve Ekin Görmek",c:"Tabiat",k:"İmam Ca'fer-i Sâdık",y:"Yeşermiş ve başak vermiş tarla görmek; salih amellere, helal kazanca ve bereketli yıllara işaret eder."},
+  {s:"Tespih Çekmek",c:"İbadet",k:"Nablusî",y:"Elinde tespihle zikir çekmek; gönül huzuruna, sıkıntıların dağılmasına ve hayırlı bir topluluğa dahil olmaya delalet eder."},
+  {s:"Toprak Kazmak / Bahçe Ekmek",c:"Tabiat",k:"İbn Şîrîn",y:"Verimli toprağı işlemek ve tohum ekmek; geleceğe yönelik hayırlı yatırımlara ve helal rızka işaret eder."},
+  {s:"Uçmak (Gökyüzüne Yükselmek)",c:"Haller",k:"İbn Şîrîn",y:"Gökyüzünde süzülerek uçmak; makam yükselişine, yolculuğa ve hedeflere hızla ulaşmaya delalet eder."},
+  {s:"Üzüm Salkımı Görmek",c:"Nimet",k:"Nablusî",y:"Siyah veya beyaz tatlı üzüm yemek; sürekli ve helal rızka, berekete ve cömertliğe işaret eder."},
+  {s:"Vadi ve Yeşillik Görmek",c:"Tabiat",k:"İmam Ca'fer-i Sâdık",y:"İçinden dere akan yeşil bir vadide yürümek; huzura, ferahlığa ve hayırlı yolculuğa delalet eder."},
+  {s:"Yağmur Altında Yürümek",c:"Tabiat",k:"İbn Şîrîn",y:"Rahmet yağmuru altında ıslanmak; ilahi berekete, duaların kabulüne ve rızık genişliğine işaret eder."},
+  {s:"Yatak / Döşek Görmek",c:"Mekan",k:"Nablusî",y:"Temiz ve rahat bir yatak görmek; huzurlu aile hayatına, istirahate ve hayırlı eşe delalet eder."},
+  {s:"Yılan Öldürmek",c:"Canlılar",k:"İbn Şîrîn",y:"Rüyada yılanı etkisiz hale getirmek; gizli düşmanlara ve hasetçilere galip gelmeye, şerden tamamen kurtulmaya işaret eder."},
+  {s:"Yıldızlar Görmek",c:"Gökyüzü",k:"İmam Ca'fer-i Sâdık",y:"Parlak yıldızları seyretmek; alimlere, rehber kimselere, yolun aydınlanmasına ve yüksek talihe delalet eder."},
+  {s:"Yolculuğa Çıkmak",c:"Yolculuk",k:"Nablusî",y:"Hayırlı bir niyetle yola çıkmak; hal ve durumun iyiliğe doğru değişmesine, yeni fırsatlara ve rızka işaret eder."},
+  {s:"Yumurta Görmek",c:"Nimet",k:"İbn Şîrîn",y:"Taze yumurta görmek; helal rızka, aile içi berekete ve yeni başlangıçlara delalet eder."},
+  {s:"Yüzük Takmak",c:"Rızık & Eşya",k:"İbn Şîrîn",y:"Parmağına gümüş veya değerli taşlı yüzük takmak; mülke, yetkiye, bekarlar için nişan ve evliliğe işaret eder."},
+  {s:"Zemzem Suyu İçmek",c:"İbadet",k:"İbn Şîrîn & Nablusî",y:"Rüyada Zemzem suyu içmek; hangi niyetle içildiyse o hacetin kabulüne, şifaya, ilme ve her iki cihanda aziz olmaya kesin delalet eder."},
+  {s:"Zeytin Ağacı Görmek",c:"Tabiat",k:"Nablusî",y:"Mübarek zeytin ağacı görmek; bereketli ömre, helal mala, şifaya ve hayırlı nesle işaret eder."},
+  {s:"Zümrüt / Değerli Taş Görmek",c:"Rızık & Eşya",k:"İmam Ca'fer-i Sâdık",y:"Yeşil zümrüt görmek; iman nuruna, ilme, helal servete ve güzel ahlaka delalet eder."}
+);
+
+KITAP = KITAP.concat(KITAP_2, KITAP_3);
+KITAP.sort(function(a,b){ return a.s.localeCompare(b.s, "tr"); });
+
+var activeLetter = "TÜMÜ";
+var harfler = new Array("TÜMÜ","A","B","C","Ç","D","E","F","G","H","I","İ","K","L","M","N","O","Ö","P","R","S","Ş","T","U","Ü","V","Y","Z");
+
+document.getElementById("azBar").innerHTML = harfler.map(function(h){
+  var cls = (h === "TÜMÜ") ? "az-btn act" : "az-btn";
+  return '<button class="'+cls+'" onclick="setLetter(\''+h+'\',this)">'+h+'</button>';
+}).join("");
+
+function setLetter(h, btn){
+  activeLetter = h;
+  document.querySelectorAll(".az-btn").forEach(function(b){ b.classList.remove("act"); });
+  btn.classList.add("act");
+  filterR();
+}
+
+function copyRuya(btn){
+  var box = btn.parentElement;
+  var title = box.querySelector("h3").innerText;
+  var desc = box.querySelector(".desc").innerText;
+  var src = box.querySelector(".src").innerText;
+  var txt = "📖 " + title + "\n\n" + desc + "\n\n" + src;
+  if(navigator.clipboard) navigator.clipboard.writeText(txt);
+  var old = btn.innerText;
+  btn.innerText = "✓ Tabir Kopyalandı!";
+  setTimeout(function(){ btn.innerText = old; }, 2000);
+}
+
+function renderR(list){
+  document.getElementById("statTxt").innerText = "Ansiklopedide Gösterilen Madde Sayısı: " + list.length + " / " + KITAP.length + " Tabir";
+  document.getElementById("rGrid").innerHTML = list.map(function(r){
+    return '<div class="card">'+
+      '<div>'+
+        '<span class="tag">'+r.s.charAt(0).toUpperCase()+' Harfi • '+r.c+'</span>'+
+        '<h3>'+r.s+'</h3>'+
+        '<div class="desc">'+r.y+'</div>'+
+        '<div class="src"><strong>Kaynak:</strong> '+r.k+'</div>'+
+      '</div>'+
+      '<button class="btn" onclick="copyRuya(this)">📋 Tabiri Kopyala</button>'+
+    '</div>';
+  }).join("");
+}
+
+function filterR(){
+  var q = document.getElementById("rSearch").value.toLocaleLowerCase("tr");
+  var filtered = KITAP.filter(function(r){
+    var firstChar = r.s.charAt(0).toLocaleUpperCase("tr");
+    var matchLetter = (activeLetter === "TÜMÜ" || firstChar === activeLetter);
+    var matchTxt = (r.s.toLocaleLowerCase("tr").indexOf(q) !== -1 || r.y.toLocaleLowerCase("tr").indexOf(q) !== -1);
+    return matchLetter && matchTxt;
+  });
+  renderR(filtered);
+}
+
+(function initDailyRuya(){
+  var now = new Date();
+  var dayIdx = Math.floor(now.getTime() / 86400000);
+  var dateStr = now.toLocaleDateString("tr-TR", {day:"numeric", month:"long", year:"numeric"});
+  var d = KITAP.at(dayIdx % KITAP.length);
+  document.getElementById("dailyBox").innerHTML =
+    '<div class="daily-top"><span>📖 ANSİKLOPEDİDEN GÜNÜN TABİRİ</span><span>📅 '+dateStr+'</span></div>'+
+    '<h3 style="color:var(--gold);margin-bottom:8px">'+d.s+' ('+d.c+')</h3>'+
+    '<div class="desc">'+d.y+'</div>'+
+    '<div class="src"><strong>Kaynak:</strong> '+d.k+'</div>'+
+    '<button class="btn" onclick="copyRuya(this)">📋 Günün Tabirini Kopyala</button>';
+})();
+
+renderR(KITAP);
+</script>
+</body>
+</html>
